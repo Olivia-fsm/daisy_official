@@ -118,14 +118,16 @@ defaults to a subdirectory of it and can be set on its own:
 
 ### 1. Data: the embedding index and the tokenized pool
 
-**Input.** The pool is FineWeb; which part of it you train on is your choice (any set of its crawl snapshots, or other
-parquet files in the same format). The pipeline starts from a copy of the chosen files in which every document carries
-its embedding: `EMBEDDED_POOL/<snapshot>/<name>.parquet` with the columns `id`, `text`, `url`, `dump`, `token_count`,
-`language_score` and `embeddings` (either at the top level or inside a struct column `metadata`). `embeddings` is the
-XLM-RoBERTa-base (`FacebookAI/xlm-roberta-base`) embedding of the first chunk of the document, of at most 512 tokens:
-the mean of the last hidden states over the tokens of the chunk, as 768 floats. Computing these embeddings is the
-one-time cost of the method; this repository starts after it. `daisy/index/build_index.py` describes the accepted
-layouts in full, and `daisy/scorers/similarity.py` checks that the embedding model reproduces the stored vectors.
+**Input.** The paper uses FineWeb (the `CC-MAIN-2023-14`, `CC-MAIN-2023-23`, `CC-MAIN-2023-40`, `CC-MAIN-2023-50`,
+`CC-MAIN-2024-10` and `CC-MAIN-2024-18` dumps; 3,282 parquet files, 1.77B documents) as training data, but feel free
+to define your own data sources, as parquet files in the same format. The pipeline starts from a copy of the files in
+which every document carries its embedding: `EMBEDDED_POOL/<snapshot>/<name>.parquet` with the columns `id`, `text`,
+`url`, `dump`, `token_count`, `language_score` and `embeddings` (either at the top level or inside a struct column
+`metadata`). `embeddings` is the XLM-RoBERTa-base (`FacebookAI/xlm-roberta-base`) embedding of the first chunk of the
+document, of at most 512 tokens: the mean of the last hidden states over the tokens of the chunk, as 768 floats.
+Computing these embeddings is the one-time cost of the method; this repository starts after it.
+`daisy/index/build_index.py` describes the accepted layouts in full, and `daisy/scorers/similarity.py` checks that the
+embedding model reproduces the stored vectors.
 
 **Index** (`scripts/build_index.sh`). The index holds 100M documents (`TARGET_DOCS`), drawn from the files of all
 snapshots of the pool: their embeddings, standardized per coordinate, 16 topics from spherical k-means, and the
