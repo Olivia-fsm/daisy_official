@@ -1,0 +1,18 @@
+# training (train.py)
+torch>=2.6
+numpy
+pyarrow
+
+# data pipeline: the index, the tokenized pool, the targets and the fixed scorers
+transformers
+tokenizers
+datatrove
+datasets
+tiktoken
+huggingface_hub
+
+# evaluation: zero-shot accuracy (the paper uses lm-evaluation-harness 0.4.13)
+lm_eval==0.4.13
+
+# optional: experiment tracking with --wandb
+wandb

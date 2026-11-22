@@ -1,0 +1,21 @@
+# LAMBADA for the chat-template evaluation (daisy/eval/lm_eval_chat.py --tasks lambada_openai_chat --reply_only): the
+# lambada_openai task of lm-evaluation-harness (0.4.13) with a doc_to_target that lacks the leading space. Under the chat
+# template the passage (all but its last word) is the user turn and the last word is the assistant's reply, which in the
+# SFT data starts right after "<|assistant|>\n" without a space -- as the harness itself drops the target delimiter of
+# multiple-choice options under a chat template. acc = every token of the word is the greedy prediction.
+task: lambada_openai_chat
+dataset_path: EleutherAI/lambada_openai
+dataset_name: default
+output_type: loglikelihood
+test_split: test
+doc_to_text: "{{text.split(' ')[:-1]|join(' ')}}"
+doc_to_target: "{{text.split(' ')[-1]}}"
+metric_list:
+  - metric: perplexity
+    aggregation: perplexity
+    higher_is_better: false
+  - metric: acc
+    aggregation: mean
+    higher_is_better: true
+metadata:
+  version: 1.0
